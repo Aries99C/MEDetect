@@ -3,7 +3,6 @@ from detect.dataset import get_loader_segment
 import torch
 import torch.nn as nn
 from detect.model import AnomalyDetect
-import time
 import numpy as np
 
 
@@ -80,7 +79,7 @@ def app():
     num_epochs = st.sidebar.number_input('Num epochs', value=20)
     batch_size = st.sidebar.slider('Batch size', min_value=8, max_value=64)
     win_size = st.sidebar.slider('Sliding Window size', min_value=32, max_value=128)
-    lr = float(st.sidebar.text_input('Learning Rate', 1e-4))
+    lr = float(st.sidebar.text_input('Learning Rate', 1e-5))
 
     st.sidebar.markdown('# Model Config')
     ae_size = st.sidebar.slider('AutoEncoder hidden size', min_value=32, max_value=256)
