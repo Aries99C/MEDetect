@@ -28,6 +28,8 @@ class MySegLoader(Dataset):
         self.test = self.scaler.transform(test_data)
         self.valid = self.test
 
+        self.test_labels = pd.read_csv('./data/test_label.csv').values[:, 1:]
+
     def __len__(self):
         if self.mode == 'train':
             return (self.train.shape[0] - self.win_size) // self.step + 1
@@ -35,15 +37,23 @@ class MySegLoader(Dataset):
             return (self.valid.shape[0] - self.win_size) // self.step + 1
         elif self.mode == 'test':
             return (self.test.shape[0] - self.win_size) // self.step + 1
+        else:
+            return (self.test.shape[0] - self.win_size) // self.win_size + 1
 
     def __getitem__(self, index):
         index = index * self.step
         if self.mode == 'train':
-            return np.float32(self.train[index:index + self.win_size]), np.float32(self.train[index:index + self.win_size])
+            return np.float32(self.train[index:index + self.win_size]), np.float32(self.test_labels[0:self.win_size])
         elif self.mode == 'valid':
-            return np.float32(self.valid[index:index + self.win_size]), np.float32(self.valid[index:index + self.win_size])
+            return np.float32(self.valid[index:index + self.win_size]), np.float32(self.test_labels[0:self.win_size])
         elif self.mode == 'test':
-            return np.float32(self.test[index:index + self.win_size]), np.float32(self.test[index:index + self.win_size])
+            return np.float32(self.test[index:index + self.win_size]), np.float32(
+                self.test_labels[index:index + self.win_size])
+        else:
+            return np.float32(
+                self.test[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size]), \
+                   np.float32(
+                self.test_labels[index // self.step * self.win_size:index // self.step * self.win_size + self.win_size])
 
 
 def get_loader_segment(batch_size, win_size=64, step=1, mode='train'):
