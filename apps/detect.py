@@ -231,10 +231,10 @@ def app():
             pred = np.array(pred)
             cols = df.columns
             cols_selected = st.multiselect('Select series: ', options=cols, default=cols.tolist()[0:2])
-            fig, ax = plt.subplots()
+            fig, ax = plt.subplots(figsize=(10, 5))
             for col in cols_selected:
                 ax.plot(df.index, df[col])
-            ax.fill_between(df.index, 0, 1, where=(pred == 1), color='red', alpha=0.1)
+            ax.fill_between(df.index, df.min().min(), 1, where=(pred == 1), color='red', alpha=0.1)
             st.pyplot(fig)
     else:
         df = pd.read_csv('./data/test.csv', index_col='timestamp_(min)')
